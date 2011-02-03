@@ -4,26 +4,26 @@ import java.lang.String
 import java.util.NoSuchElementException
 
 /**
+ * Read all the files given on input and sorts and "merges" them into one file
+ *
  * @author Stig Kleppe-Jorgensen, 2011.02.02
- * @fixme add description
  */
 
 val columns: Array[Iterator[String]] = args.map ( arg => io.Source.fromFile(arg).getLines )
-
-var m = new TreeMap[String, RowWithColumns]
+var result = new TreeMap[String, RowWithColumns]
 
 columns.toList.view.zipWithIndex foreach { case (column, index) =>
-  column.foreach{n =>
+  column.foreach { n =>
     val name: String = n.trim
     var rwc: RowWithColumns = null
 
     try {
-      rwc = m(name)
+      rwc = result(name)
     }
     catch {
       case e: NoSuchElementException => {
         rwc = new RowWithColumns(name)
-        m += (name -> rwc)
+        result += (name -> rwc)
       }
     }
 
@@ -31,8 +31,7 @@ columns.toList.view.zipWithIndex foreach { case (column, index) =>
   }
 }
 
-m.values.foreach(println(_))
-
+result.values.foreach(println(_))
 
 
 class RowWithColumns(n: String) {
@@ -46,6 +45,7 @@ class RowWithColumns(n: String) {
   override def toString: String = {
     var s = ""
 
+    // TODO support more columns than 3, foreach?
     if (columns(0)) {
       s += name + ";"
     } else {
